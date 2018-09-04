@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename Java project &apos;win_utils&apos; to &apos;win&apos;&#x0D;&#x0A;- Original element: &apos;win_utils&apos;&#x0D;&#x0A;- Renamed element: &apos;win_utils&apos;&#x0D;&#x0A;- Update references to refactored element" description="Rename Java project &apos;win_utils&apos;" flags="7" id="org.eclipse.jdt.ui.rename.java.project" input="=win_utils" name="win" references="true" stamp="1536072377450" version="1.0"/>
+</session>

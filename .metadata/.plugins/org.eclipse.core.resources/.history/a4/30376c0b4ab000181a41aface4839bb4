@@ -1,0 +1,11 @@
+package com.hy.winUtil2;
+
+import com.hy.winUtil.KeyboardHook;
+
+public class WinRun {
+
+	public static void main(String[] args) {
+		new KeyboardHook(true).run();
+		new Thread(new KeyboardHook(on_off)).start()
+	}
+}
