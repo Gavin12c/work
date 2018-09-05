@@ -80,7 +80,7 @@ public class MouseHook implements Runnable{
     private boolean MB = false;
     
     public void run() {
-    	final ImageApp imageApp = new ImageApp();
+    	final ImageApp imageApp = ImageApp.getImageApp();
     	hMod = Kernel32.INSTANCE.GetModuleHandle(null);
         mouseHook = new LowLevelMouseProc() {  
             public LRESULT callback(int nCode, WPARAM wParam,  
@@ -89,14 +89,6 @@ public class MouseHook implements Runnable{
                     System.exit(0);  
                 }  
                 if (nCode >= 0) {
-//                    switch (wParam.intValue()) {
-//	                    case MouseHook.WM_LBUTTONDOWN:
-//	                    	System.out.println("点击了左键");
-//	                    	break;
-//	                    case MouseHook.WM_RBUTTONDOWN:
-//	                    	System.out.println("点击了右键");
-//	                    	break;
-//	                }
                 	if(wParam.intValue() == MouseHook.WM_MBUTTONDOWN){
                 		MB = true;
                 	}else if(wParam.intValue() == MouseHook.WM_MBUTTONUP){
@@ -109,10 +101,12 @@ public class MouseHook implements Runnable{
                 		LB = false;
                 	}
                 	
-                	if(LB && MB){
+                	if(LB && MB){ //当中键和左键按住的时候
                 		imageApp.setVisible(true);
-                	}else{
+                		imageApp.setFlag(true);
+                	}else if(!imageApp.isDing()){ //如果窗口没有被定住
                 		imageApp.setVisible(false);
+                		imageApp.setFlag(false);
                 	}
                 	
                 	

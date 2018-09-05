@@ -18,9 +18,13 @@ public class ImageApp extends JFrame {
 	Point pressedPoint;
 	private int x = 538/5;
 	private int y = 897/5;
+	static ImageApp imageApp = new ImageApp();
 	
 	//精灵显示
 	private boolean flag = false;
+	
+	//定住显示
+	private boolean ding = false;
 	
     public ImageApp() {
     	this.setUndecorated(true);// 取消窗体修饰效果
@@ -49,13 +53,10 @@ public class ImageApp extends JFrame {
         JPanel panel = new ImagePanel();
         panel.setOpaque(false);  //设置JPanel透明
         getContentPane().add(panel);
-//        setVisible(true);    //显示
+        //setVisible(ding);//显示
     }
+    
 
-//    public static void main(String[] args) {
-//        ImageApp imageApp = new ImageApp();
-////        imageApp.setVisible(false);
-//    }
 
     class ImagePanel extends JPanel {
         public void paint(Graphics g) {
@@ -65,6 +66,25 @@ public class ImageApp extends JFrame {
             g2.drawImage(icon.getImage(), 0, 0, x, y, null);
         }
     }
+
+    
+	public static ImageApp getImageApp() {
+		return imageApp;
+	}
+
+	public static void setImageApp(ImageApp imageApp) {
+		ImageApp.imageApp = imageApp;
+	}
+
+	
+	public boolean isDing() {
+		return ding;
+	}
+
+	public void setDing(boolean ding) {
+		this.flag = ding;
+		this.ding = ding;
+	}
 
 	public boolean isFlag() {
 		return flag;
