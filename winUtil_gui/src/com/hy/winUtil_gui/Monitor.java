@@ -19,7 +19,8 @@ public class Monitor  {
         final TrayIcon trayIcon;    //添加到系统托盘的托盘图标
   
         if (SystemTray.isSupported()) {
-  
+        	try { 
+        		
             SystemTray tray = SystemTray.getSystemTray();    //任务栏状态区域(桌面的系统托盘)
             Image image = Toolkit.getDefaultToolkit().getImage(".//lib//monitor.png");    
   
@@ -31,7 +32,7 @@ public class Monitor  {
             };    
   
             PopupMenu popup = new PopupMenu();    //创建具有空名称的新弹出式菜单。
-            MenuItem defaultItem = new MenuItem("Exit");    //加标签的菜单项,标签为"Exit" ; 快捷键参数 MenuShortcut s
+            MenuItem defaultItem = new MenuItem(new String("退出".getBytes("GBK") , "GBK"));    //加标签的菜单项,标签为"Exit" ; 快捷键参数 MenuShortcut s
             defaultItem.addActionListener(exitListener);    
             popup.add(defaultItem);    
   
@@ -49,9 +50,9 @@ public class Monitor  {
             trayIcon.setImageAutoSize(true);    //设置自动调整大小的属性。
             trayIcon.addActionListener(actionListener);    
   
-            try {    
-                tray.add(trayIcon);    
-            } catch (AWTException e1) {    
+               
+            	tray.add(trayIcon);    
+            } catch (Exception e1) {    
                 e1.printStackTrace();    
             }    
   

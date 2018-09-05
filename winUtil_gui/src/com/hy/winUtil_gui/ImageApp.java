@@ -58,7 +58,8 @@ public class ImageApp extends JFrame {
     
 
 
-    class ImagePanel extends JPanel {
+    @SuppressWarnings("serial")
+	class ImagePanel extends JPanel {
         public void paint(Graphics g) {
             super.paint(g);
             Graphics2D g2 = (Graphics2D)g;

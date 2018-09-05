@@ -1,21 +1,7 @@
 package com.hy.winUtil_gui;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Toolkit;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.platform.win32.Kernel32;
@@ -47,6 +33,10 @@ public class KeyboardHook implements Runnable{
         this.on_off = on_off;
     }
     
+    private boolean LB = false;
+    private boolean MB = false;
+	
+	
     public void run() {
     	final ImageApp imageApp = ImageApp.getImageApp();
     	final List<String> fileName = Win_Dos.getFileName();
@@ -59,9 +49,22 @@ public class KeyboardHook implements Runnable{
             		System.exit(0);  
             	}
             	imageApp.setVisible(imageApp.isFlag()); //是否显示
+	            	if(WinUser.WM_KEYDOWN == wParam.intValue() && event.vkCode == 117){
+	            		MB = true;
+	            	}else if(WinUser.WM_KEYUP == wParam.intValue() && event.vkCode == 117){
+	            		MB = false;
+	            	}
+	            	if(WinUser.WM_KEYDOWN == wParam.intValue() && event.vkCode == 118){
+	            		LB = true;
+	            	}else if(WinUser.WM_KEYUP == wParam.intValue() && event.vkCode == 118){
+	            		LB = false;
+	            	}
+	            	if(LB && MB){ //当中键和左键按住的时候
+	            		imageApp.setDing(ding=!ding);
+	            	}
             	if (nCode >= 0 &&  (WinUser.WM_SYSKEYDOWN == wParam.intValue() || WinUser.WM_KEYDOWN == wParam.intValue())) {  //WM_SYSKEYDOWN 系统按键      WM_KEYDOWN 普通按键
             	
-            		if(event.vkCode == 117){imageApp.setDing(ding=!ding);} //  定住窗口
+//            		if(event.vkCode == 117){imageApp.setDing(ding=!ding);} //  定住窗口
             		if(event.vkCode == 119){exe("cmd.exe /C "+path+"/myeclipse.lnk");} //F8
             		if(event.vkCode == 120){exe("cmd.exe /C "+path+"/腾讯QQ.lnk");} //F9
             		if(event.vkCode == 121){exe("cmd.exe /C "+path+"/微信.lnk");} //F10
