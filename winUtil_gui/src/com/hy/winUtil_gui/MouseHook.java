@@ -73,8 +73,40 @@ public class MouseHook implements Runnable{
     private boolean LB = false;
     private boolean MB = false;
     
+    private boolean suspend = false; //是否暂停
+	
+	public void setSuspend(boolean suspend) {
+        if (!suspend) {  //false , 则开启
+            synchronized (this) {
+                this.notifyAll();
+            }
+        }
+        this.suspend = suspend;
+    }
+ 
+    public boolean isSuspend() {
+        return this.suspend;
+    }
+    
     public void run() {
-    	final ImageApp imageApp = ImageApp.getImageApp();
+    	
+    	while (true) {
+            synchronized (this) {
+                if (suspend) { //确认暂停
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            this.mouseEvent();
+        }
+    	
+    }
+
+	private void mouseEvent() {
+		final ImageApp imageApp = ImageApp.getImageApp();
     	hMod = Kernel32.INSTANCE.GetModuleHandle(null);
         mouseHook = new LowLevelMouseProc() {  
             public LRESULT callback(int nCode, WPARAM wParam,  
@@ -123,6 +155,6 @@ public class MouseHook implements Runnable{
                 lib.DispatchMessage(msg);  
             }  
         }
-        lib.UnhookWindowsHookEx(hhk);  
-    }  
+        lib.UnhookWindowsHookEx(hhk);
+	}  
 }  

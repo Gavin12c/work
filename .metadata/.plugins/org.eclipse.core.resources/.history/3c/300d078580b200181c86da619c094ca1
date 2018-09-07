@@ -1,0 +1,125 @@
+package com.hy.winUtil_gui;
+
+import java.awt.Image;    
+import java.awt.MenuItem;    
+import java.awt.PopupMenu;    
+import java.awt.SystemTray;    
+import java.awt.Toolkit;    
+import java.awt.TrayIcon;    
+import java.awt.event.ActionEvent;    
+import java.awt.event.ActionListener;    
+  
+public class Monitor  {    
+  
+	private static Thread thread_key;
+	private static Thread thread_mou;
+	static boolean [] on_off={true};
+	
+	public static Thread getThread_key() {
+		return thread_key  = new Thread(new KeyboardHook(on_off));
+	}
+
+	public static void setThread_key(Thread thread_key) {
+		Monitor.thread_key = thread_key;
+	}
+
+	public static Thread getThread_mou() {
+		return thread_mou = new Thread(new MouseHook(on_off)); 
+	}
+
+	public static void setThread_mou(Thread thread_mou) {
+		Monitor.thread_mou = thread_mou;
+	}
+
+	private static String msg = "程序已启动";
+	private static String ic = "monitor.png";    //彩色
+	private static String ig = "monitor2.png";   //灰色
+	
+	private static boolean suspend = false;
+	
+	
+	
+    public static boolean isSuspend() {
+		return suspend;
+	}
+
+	public static void setSuspend(boolean suspend) {
+		Monitor.suspend = suspend;
+	}
+
+	public Monitor()  {    
+		getThread_key().start();
+        thread_mou.start();
+        final TrayIcon trayIcon;    //添加到系统托盘的托盘图标
+  
+        if (SystemTray.isSupported()) {
+        	try { 
+        		
+            SystemTray tray = SystemTray.getSystemTray();    //任务栏状态区域(桌面的系统托盘)
+            Image image_c = Toolkit.getDefaultToolkit().getImage(".//lib//"+ic);    
+  
+            //退出
+            ActionListener exitListener = new ActionListener() {    
+                public void actionPerformed(ActionEvent e) {    
+                    System.exit(0);    
+                }  
+            };    
+            
+            //暂停
+            ActionListener suspendListener = new ActionListener() {    
+            	public void actionPerformed(ActionEvent e) {  
+            		
+            		try {
+            			if(suspend = !isSuspend()){
+            				msg = "程序已暂停";
+            				getThread_key().wait();
+            				getThread_mou().wait();
+            			}else{
+            				msg = "程序已启动";
+            				getThread_key().notify();getThread_mou().notify();
+            			}
+					} catch (InterruptedException e1) {
+						e1.printStackTrace();
+					}
+            		
+            	}  
+            };    
+  
+            PopupMenu popup = new PopupMenu();    //创建具有空名称的新弹出式菜单。
+            MenuItem defaultItem2 = new MenuItem(new String("暂停/启动".getBytes("GBK") , "GBK"));    //加标签的菜单项,标签为"暂停" ; 快捷键参数 MenuShortcut s
+            defaultItem2.addActionListener(suspendListener);    
+            MenuItem defaultItem1 = new MenuItem(new String("退出".getBytes("GBK") , "GBK"));    //加标签的菜单项,标签为"退出 ; 快捷键参数 MenuShortcut s
+            defaultItem1.addActionListener(exitListener);    
+            popup.add(defaultItem1);    
+            popup.add(defaultItem2);    
+  
+            
+            trayIcon = new TrayIcon(image_c, "monitor", popup);   //创建带指定图像、工具提示和弹出菜单的 TrayIcon 
+  
+            ActionListener actionListener = new ActionListener() {    
+                public void actionPerformed(ActionEvent e) {
+                    trayIcon.displayMessage("",     
+                            msg,    
+                            TrayIcon.MessageType.NONE);    //在托盘图标附近显示弹出消息。   [INFO提示信息  ERROR错误信息    NONE普通信息     WARNING警告信息 ]
+                   
+                }    
+            };    
+  
+            trayIcon.setImageAutoSize(true);    //设置自动调整大小的属性。
+            trayIcon.addActionListener(actionListener);    
+  
+               
+            	tray.add(trayIcon);    
+            } catch (Exception e1) {    
+                e1.printStackTrace();    
+            }    
+  
+        }   
+    }  
+      
+    public static void main(String[] args) throws Exception  {    
+        new Monitor();    
+        
+    }    
+  
+}    

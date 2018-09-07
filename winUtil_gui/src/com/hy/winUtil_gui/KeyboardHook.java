@@ -30,15 +30,48 @@ public class KeyboardHook implements Runnable{
 	private boolean ding = false;
 	
 	public KeyboardHook(boolean [] on_off){ 
-        this.on_off = on_off;
-    }
-    
-    private boolean LB = false;
-    private boolean MB = false;
+		this.on_off = on_off;
+	}
 	
+	private boolean LB = false;
+	private boolean MB = false;
+	
+	
+	private boolean suspend = false; //是否暂停
+	
+	public void setSuspend(boolean suspend) {
+        if (!suspend) {  //false , 则开启
+            synchronized (this) {
+                this.notifyAll();
+            }
+        }
+        this.suspend = suspend;
+    }
+ 
+    public boolean isSuspend() {
+        return this.suspend;
+    }
 	
     public void run() {
-    	final ImageApp imageApp = ImageApp.getImageApp();
+    	
+    	while (true) {
+            synchronized (this) {
+                if (suspend) { //确认暂停
+                    try {
+                        this.wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            this.keyEvent();  
+        }
+    	
+    }
+
+
+	private void keyEvent() {
+		final ImageApp imageApp = ImageApp.getImageApp();
     	final List<String> fileName = Win_Dos.getFileName();
         HMODULE hMod = Kernel32.INSTANCE.GetModuleHandle(null);
         
@@ -94,8 +127,8 @@ public class KeyboardHook implements Runnable{
                 lib.DispatchMessage(msg);  
             }  
         }  
-        lib.UnhookWindowsHookEx(hhk);  
-    }  
+        lib.UnhookWindowsHookEx(hhk);
+	}  
   
     
     public void exe(String path){

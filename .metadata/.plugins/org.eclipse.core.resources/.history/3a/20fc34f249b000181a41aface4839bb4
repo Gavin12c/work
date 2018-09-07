@@ -1,8 +1,0 @@
-package com.hy.winUtil2;
-
-public class WinRun {
-
-	public static void main(String[] args) {
-		new KeyboardHook(true);
-	}
-}
